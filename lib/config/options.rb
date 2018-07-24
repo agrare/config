@@ -6,6 +6,16 @@ module Config
     include Enumerable
     include Validation::Validate if RUBY_VERSION >= '2.1'
 
+    attr_accessor :overwrite_arrays, :knockout_prefix, :merge_nil_values
+    def initialize(overwrite_arrays: Config.overwrite_arrays,
+                   knockout_prefix:  Config.knockout_prefix,
+                   merge_nil_values: Config.merge_nil_values)
+      self.overwrite_arrays = overwrite_arrays
+      self.knockout_prefix  = knockout_prefix
+      self.merge_nil_values = merge_nil_values
+      super()
+    end
+
     def keys
       marshal_dump.keys
     end
@@ -80,9 +90,9 @@ module Config
                                 source_conf,
                                 conf,
                                 preserve_unmergeables: false,
-                                knockout_prefix:       Config.knockout_prefix,
-                                overwrite_arrays:      Config.overwrite_arrays,
-                                merge_nil_values:      Config.merge_nil_values
+                                knockout_prefix:       knockout_prefix,
+                                overwrite_arrays:      overwrite_arrays,
+                                merge_nil_values:      merge_nil_values
                                )
         end
       end
@@ -132,9 +142,9 @@ module Config
                             hash.dup,
                             current,
                             preserve_unmergeables: false,
-                            knockout_prefix:       Config.knockout_prefix,
-                            overwrite_arrays:      Config.overwrite_arrays,
-                            merge_nil_values:      Config.merge_nil_values
+                            knockout_prefix:       knockout_prefix,
+                            overwrite_arrays:      overwrite_arrays,
+                            merge_nil_values:      merge_nil_values
                            )
       marshal_load(__convert(current).marshal_dump)
       self
